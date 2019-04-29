@@ -6,7 +6,7 @@
  * Email: abo2013@foxmail.com
  */
 
-namespace App\Library\Utils;
+namespace Abo\Generalutil\Utils;
 
 class LogUtil
 {
