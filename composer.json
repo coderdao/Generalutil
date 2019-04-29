@@ -1,7 +1,7 @@
 {
     "name": "abo/generalutil",
     "description": "abo's general utility support service",
-    "license": "APACHE",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "abo",
