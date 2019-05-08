@@ -113,7 +113,7 @@ class BaseRepository
      * @param $Model
      * @return string
      */
-    public function getSqlWithBind( $Model )
+    public static function getSqlWithBind( $Model )
     {
         $bindings = $Model->getBindings();
         $sql = str_replace( '?', '\'%s\'', $Model->toSql() );
@@ -122,16 +122,15 @@ class BaseRepository
 
     /**
      * 单个插入更新
-     * @param $fileCategoryRelationArr
+     * @param array $fileCategoryRelationArr
      * @param string $tableName
      * @return mixed
      * @throws \Exception
      */
-    protected function duplicateKeyInsert( $fileCategoryRelationArr, $tableName = '' )
+    public static function duplicateKeyInsert( array $fileCategoryRelationArr, string $tableName = '', string $connection = '' )
     {
         $insertColumns = null;
         $updateColumnsKeyArr = $updateColumnsKeyStr = false;
-        $tableName = $tableName ?: $this->Model->getTable();
 
         // 添加部分绑定
         $insertColumns = array_keys( $fileCategoryRelationArr );
@@ -149,7 +148,13 @@ class BaseRepository
 
         $duplicateInsertSql = "insert into {$tableName} ( {$insertColumnsKeyStr} ) "
             . "values ( {$insertColumnsQuestionStr} )  ON DUPLICATE KEY UPDATE {$updateColumnsKeyStr}";
-        $ret2Return = DB::connection( $this->Model->getConnectionName() )->insert( $duplicateInsertSql, $insertColumnsBindValue );
+
+        if ( $connection ) {
+            $ret2Return = DB::connection( $connection )->insert( $duplicateInsertSql, $insertColumnsBindValue );
+        }else{
+            $ret2Return = DB::insert( $duplicateInsertSql, $insertColumnsBindValue );
+        }
+
 
         return $ret2Return;
     }
