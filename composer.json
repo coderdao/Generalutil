@@ -21,7 +21,6 @@
             "Abo\\Generalutil\\": "src/"
         },
         "files": [
-            "src/helpers.php"
         ]
     },
     "extra": {
