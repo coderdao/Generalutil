@@ -1,6 +1,7 @@
 {
     "name": "abo/generalutil",
     "description": "abo's general utility support service",
+    "keywords": [ "php", "laravel", "lumen", "util" ],
     "license": "Apache-2.0",
     "authors": [
         {
