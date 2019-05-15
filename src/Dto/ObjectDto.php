@@ -6,7 +6,7 @@
  * Description:
  */
 
-namespace Abo\Fasterapi\Dto\BaseDto;
+namespace Abo\Generalutil\Dto;
 
 
 class ObjectDto

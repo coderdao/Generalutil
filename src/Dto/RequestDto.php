@@ -6,7 +6,7 @@
  * Email: abo2013@foxmail.com
  */
 
-namespace Abo\Fasterapi\Dto\BaseDto;
+namespace Abo\Generalutil\Dto;
 
 use Illuminate\Http\Request;
 
@@ -17,9 +17,8 @@ class RequestDto
 
     public function __construct()
     {
-        $request = \request();
-        $this->request = $request;
-        $this->urlParams = $request->all();
+        $this->request = \request();
+        $this->urlParams = $this->request->all();
     }
 
     /** 获取请求参数 */
