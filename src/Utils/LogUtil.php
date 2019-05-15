@@ -100,6 +100,10 @@ class LogUtil
      */
     protected static function getDefaultLogPath( string $logName = 'logger' ){
 
+        if ( is_file( $logName ) && file_exists( $logName ) ) {
+            return $logName;
+        }
+
         $logPath = storage_path( 'logs/'.$logName.'-'.date( 'Y-m-d' ).'.log' );
         if( !is_dir( dirname( $logPath ) ) ) {
             logger( '设置日志目录不存在', false );
