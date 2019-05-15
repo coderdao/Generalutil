@@ -17,7 +17,7 @@ class RequestDto
 
     public function __construct()
     {
-        $request = Request();
+        $request = \request();
         $this->request = $request;
         $this->urlParams = $request->all();
     }
