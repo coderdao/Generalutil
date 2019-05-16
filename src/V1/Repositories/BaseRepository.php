@@ -11,7 +11,7 @@
  * @method getSqlWithBind( $Model )         获取带参数sql
  */
 
-namespace Abo\Generalutil\Repositories;
+namespace Abo\Generalutil\V1\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Class BaseRepository
- * @package Abo\Generalutil\Repositories
+ * @package Abo\Generalutil\V1\Repositories
  */
 class BaseRepository
 {

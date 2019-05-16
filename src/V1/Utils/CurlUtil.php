@@ -4,7 +4,7 @@
  * @method makeRequest($method, $url, $params, $content_type, $expire, $is_browser, $the_header, $extend)
  */
 
-namespace Abo\Generalutil\Utils;
+namespace Abo\Generalutil\V1\Utils;
 
 
 class CurlUtil

@@ -6,7 +6,7 @@
  * Email: abo2013@foxmail.com
  */
 
-namespace Abo\Generalutil\Dto;
+namespace Abo\Generalutil\V1\Dto;
 
 use Illuminate\Http\Request;
 

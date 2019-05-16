@@ -6,7 +6,7 @@
  * Email: abo2013@foxmail.com
  */
 
-namespace Abo\Generalutil\Utils;
+namespace Abo\Generalutil\V1\Utils;
 
 class LogUtil
 {

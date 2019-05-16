@@ -1,6 +1,6 @@
 <?php
 
-namespace Abo\Generalutil\Utils;
+namespace Abo\Generalutil\V1\Utils;
 
 use ArrayAccess;
 use Illuminate\Support\Arr;

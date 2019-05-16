@@ -6,7 +6,7 @@
  * Description:
  */
 
-namespace Abo\Generalutil\Dto;
+namespace Abo\Generalutil\V1\Dto;
 
 
 class ObjectDto

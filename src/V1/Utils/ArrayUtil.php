@@ -5,7 +5,7 @@
  * @method randonNum( int $length = 6 )     随机数组字符串
  */
 
-namespace Abo\Generalutil\Utils;
+namespace Abo\Generalutil\V1\Utils;
 
 
 class ArrayUtil
