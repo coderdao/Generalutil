@@ -30,31 +30,23 @@ class BaseRepository
         $this->Model = $Model;
     }
 
-    /**
-     * 根据条件搜索单个信息
-     * @param array $where [ 'whereName'=>'whereValue' ]
-     * @param array $column2Select
-     * @return array
-     */
-    public function getInfoByKey( array $where, array $column2Select = [ '*' ] ):array
+    /** 根据条件搜索单个信息 @param array $where [ 'whereName'=>'whereValue' ] */
+    public function getInfoByKey( array $where, array $column2Select = [ '*' ] )
     {
         $where = array_filter( $where );
         if ( !$where ) { return []; }
 
         $infoModel = $this->Model->select( $column2Select );
-        if ( $where ) {
-            foreach ( $where as $k2Where => $v2Where ) {
-                $infoModel->where( $k2Where, '=', $v2Where );
-            }
-        }
+        $infoModel = $this->handleWhereParam( $infoModel, $where );
 
         $info = $infoModel->first();
         if ( false === $info ) { return []; }
+        $info = $info->toArray();
 
         // 获取单一字段时,直接返回
         $column2Select_0 = current( $column2Select );
         if ( 1 == count( $column2Select ) && '*' != $column2Select_0 ) {
-            return $info->getAttributeValue( $column2Select_0 );
+            return current( $info );
         }
 
         return $info;
@@ -68,20 +60,23 @@ class BaseRepository
      * @param array $where [ 'whereName'=>'whereValue' ]
      * @return array
      */
-    public function getListByKey( $keyName, array $keyId, array $column2Select = [ '*' ], array $where = [] ):array
+    public function getListByKey( array $column2Select = [ '*' ], array $where = [], int $page = 0, int $pageNum = 0 ):array
     {
         $listModel = $this->Model->select( $column2Select );
-        if ( $keyName && $keyId ) {
-            $listModel = $listModel->whereIn( $keyName, $keyId );
+        $listModel = $this->handleWhereParam( $listModel, $where );
+
+        if ( $page && $pageNum ) {
+            $listModel = $listModel->forPage( $page, $pageNum );
         }
 
-        if ( $where ) {
-            foreach ( $where as $k2Where => $v2Where ) {
-                $listModel = $listModel->where( $k2Where, $v2Where );
-            }
+        // 获取单一字段时,直接返回
+        $column2Select_0 = current( $column2Select );
+        if ( 1 == count( $column2Select ) && '*' != $column2Select_0 ) {
+            $list = $listModel->pluck( $column2Select_0 );
+        }else{
+            $list = $listModel->get();
         }
 
-        $list = $listModel->get();
         if ( false === $list ) { return []; }
 
         return $list->toArray();
@@ -93,7 +88,7 @@ class BaseRepository
      * @param string $table string 全表总数据
      * @return int
      */
-    protected function countSearchTotal( $Model, string $table = '' )
+    public function countSearchTotal( $Model, string $table = '' )
     {
         if ( $table ){
             $countSql = 'SELECT COUNT(1) as num FROM '.$table;
@@ -157,5 +152,22 @@ class BaseRepository
 
 
         return $ret2Return;
+    }
+
+    /** 添加数组处理 */
+    private function handleWhereParam( $Model, array $where )
+    {
+        if ( !$Model || !$where ) { return $Model; }
+
+        foreach ( $where as $k2Where => $v2Where ) {
+            if ( isset( $v2Where[ 'op' ] ) ) {
+                $Model = $Model->where( $k2Where, strval( $v2Where[ 'op' ] ), $v2Where );
+                continue;
+            }
+
+            $Model = $Model->where( $k2Where, '=', $v2Where );
+        }
+
+        return $Model;
     }
 }
