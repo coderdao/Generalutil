@@ -104,6 +104,7 @@ class LogUtil
             return $logName;
         }
 
+        $logName = strstr( basename( $logName ), '.', true );
         $logPath = storage_path( 'logs/'.$logName.'-'.date( 'Y-m-d' ).'.log' );
         if( !is_dir( dirname( $logPath ) ) ) {
             logger( '设置日志目录不存在:'.$logPath, [] );
