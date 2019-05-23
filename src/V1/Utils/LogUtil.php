@@ -11,22 +11,12 @@ namespace Abo\Generalutil\V1\Utils;
 class LogUtil
 {
     /** 日志等级 @var string  */
-    protected static $LEVEL_INFO = 'info';
-    protected static $LEVEL_ERROR = 'error';
-    protected static $LEVEL_DEBUG = 'debug';
-    protected static $LEVEL_EXCEPTION = 'exception';
+    const LEVEL_INFO = 'info';
+    const LEVEL_ERROR = 'error';
+    const LEVEL_DEBUG = 'debug';
+    const LEVEL_EXCEPTION = 'exception';
 
-    protected static $LOG_PATH = '';
-    public $defaultPath = '';
-
-    public function __construct( $defaultPath )
-    {
-        if ( !$defaultPath ) {
-            $defaultPath = storage_path( 'logs/logger-'.date( 'Y-m-d' ).'.log' );
-        }
-
-        $this->defaultPath = $defaultPath;
-    }
+    protected $defaultPath = '';
 
     /**
      * 流程记录
@@ -37,7 +27,7 @@ class LogUtil
      */
     public static function info( string $title = '', array $content = [], string $logFileName = 'logger' )
     {
-        return self::logger( $title, $content, $logFileName, self::$LEVEL_INFO );
+        return self::logger( $title, $content, $logFileName, self::LEVEL_INFO );
     }
 
     /**
@@ -49,7 +39,7 @@ class LogUtil
      */
     public static function debug( string $title = '', array $content = [], string $logFileName = 'logger' )
     {
-        return self::logger( $title, $content, $logFileName, self::$LEVEL_DEBUG );
+        return self::logger( $title, $content, $logFileName, self::LEVEL_DEBUG );
     }
 
     /**
@@ -61,7 +51,7 @@ class LogUtil
      */
     public static function exception( string $title = '', array $content = [], string $logFileName = 'logger' )
     {
-        return self::logger( $title, $content, $logFileName, self::$LEVEL_EXCEPTION );
+        return self::logger( $title, $content, $logFileName, self::LEVEL_EXCEPTION );
     }
 
     /**
@@ -73,7 +63,7 @@ class LogUtil
      */
     public static function error( string $title = '', array $content = [], string $logFileName = 'logger' )
     {
-        return self::logger( $title, $content, $logFileName, self::$LEVEL_ERROR );
+        return self::logger( $title, $content, $logFileName, self::LEVEL_ERROR );
     }
 
     /**
@@ -84,7 +74,7 @@ class LogUtil
      * @param string $logLevel
      * @return bool|int
      */
-    protected static function logger( string $title = '', array $content = [], string $logFileName = 'logger', string $logLevel = 'info' )
+    protected static function logger( string $title, array $content = [], string $logFileName = 'logger', string $logLevel = 'info' )
     {
         $logPath = self::getDefaultLogPath( $logFileName );
         $text2Log = self::logFormmat( $title, $content, $logLevel );
@@ -98,36 +88,18 @@ class LogUtil
      * @return string
      * @throws \Exception
      */
-    protected static function getDefaultLogPath( string $logName = 'logger' ){
-
+    protected static function getDefaultLogPath( string $logName = 'logger' )
+    {
         if ( is_file( $logName ) && file_exists( $logName ) ) {
             return $logName;
         }
 
-        $logName = strstr( basename( $logName ), '.', true );
-        $logPath = storage_path( 'logs/'.$logName.'-'.date( 'Y-m-d' ).'.log' );
+        $logPath = self::logPath().'/logs/'.basename( $logName ).'-'.date( 'Y-m-d' ).'.log';
         if( !is_dir( dirname( $logPath ) ) ) {
-            logger( '设置日志目录不存在:'.$logPath, [] );
+            throw new \Exception( '设置日志目录不存在:'.$logPath, false );
         }
 
         return $logPath;
-    }
-
-    /**
-     * 设置默认日志名 (是否有用 保留态度)
-     * @param string $logName
-     * @return string
-     * @throws \Exception
-     */
-    protected function setDefaultLogName( string $logName = 'logger' )
-    {
-        $logPath = storage_path( 'logs/'.$logName.'-'.date( 'Y-m-d' ).'.log' );
-
-        if( is_dir( dirname( $logPath ) ) ) {
-            throw new \Exception( '设置日志目录不存在', false );
-        }
-
-        return $this->defaultPath = $logPath;
     }
 
     /**
@@ -145,5 +117,27 @@ class LogUtil
         }
 
         return $logFormmat."\r\n\r\n";
+    }
+
+    /** 项目根目录 @return string */
+    private static function logPath():string
+    {
+        $rootPath = $logPath = self::appRootPath();
+        $storagePath = $rootPath.'/storage';
+        $runtimePath = $rootPath.'/runtime';
+
+        if ( is_dir( $storagePath ) ) {
+            $logPath = $storagePath;
+        }elseif ( is_dir( $runtimePath ) ) {
+            $logPath = $runtimePath;
+        }
+
+        return $logPath;
+    }
+
+    /** 项目根目录 @return string */
+    private static function appRootPath():string
+    {
+        return dirname( __FILE__, 7 );
     }
 }
