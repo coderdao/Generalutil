@@ -23,7 +23,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function info( string $title, $content, string $logFileName = 'logger' )
+    public static function info( string $title, $content = '', string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_INFO );
     }
@@ -35,7 +35,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function debug( string $title, $content, string $logFileName = 'logger' )
+    public static function debug( string $title, $content = '', string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_DEBUG );
     }
@@ -47,7 +47,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function exception( string $title, $content, string $logFileName = 'logger' )
+    public static function exception( string $title, $content = '', string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_EXCEPTION );
     }
@@ -59,7 +59,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function error( string $title, $content, string $logFileName = 'logger' )
+    public static function error( string $title, $content = '', string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_ERROR );
     }
@@ -72,7 +72,7 @@ class LogUtil
      * @param string $logLevel
      * @return bool|int
      */
-    protected static function logger( string $title, $content, string $logFileName = 'logger', string $logLevel = 'info' )
+    protected static function logger( string $title, $content = '', string $logFileName = 'logger', string $logLevel = 'info' )
     {
         $logPath = self::getDefaultLogPath( $logFileName );
         $text2Log = self::logFormmat( $title, $content, $logLevel );
@@ -107,12 +107,13 @@ class LogUtil
      * @param string $logLevel
      * @return string
      */
-    private static function logFormmat( string $title, $content, string $logLevel )
+    private static function logFormmat( string $title, $content = '', string $logLevel )
     {
         $logFormmat = '['.date( 'Y-m-d H:i:s' ).'] local.'.$logLevel.': '.$title;
         if ( $content ) {
             if ( is_array( $content ) ) {
-                $logFormmat .= "\r\n省略内容如下:".json_encode( array_slice( $content, 0, 8) );
+                count( $content ) > 8 && $content = array_slice( $content, 0, 8);
+                $logFormmat .= "\r\n省略内容如下:".json_encode( $content );
             }elseif ( is_string( $content ) ) {
                 $logFormmat .= "\r\n省略内容如下:".$content;
             }else{
