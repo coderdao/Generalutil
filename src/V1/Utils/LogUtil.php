@@ -142,6 +142,6 @@ class LogUtil
     /** 项目根目录 @return string */
     private static function appRootPath():string
     {
-        return dirname( __FILE__, 4 );
+        return dirname( __FILE__, 7 );
     }
 }
