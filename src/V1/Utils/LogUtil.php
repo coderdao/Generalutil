@@ -16,16 +16,14 @@ class LogUtil
     const LEVEL_DEBUG = 'debug';
     const LEVEL_EXCEPTION = 'exception';
 
-    protected $defaultPath = '';
-
     /**
      * 流程记录
      * @param string $title
-     * @param array $content
+     * @param $content
      * @param string $logFileName
      * @return bool|int
      */
-    public static function info( string $title = '', array $content = [], string $logFileName = 'logger' )
+    public static function info( string $title, $content, string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_INFO );
     }
@@ -37,7 +35,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function debug( string $title = '', array $content = [], string $logFileName = 'logger' )
+    public static function debug( string $title, $content, string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_DEBUG );
     }
@@ -49,7 +47,7 @@ class LogUtil
      * @param string $logFileName
      * @return bool|int
      */
-    public static function exception( string $title = '', array $content = [], string $logFileName = 'logger' )
+    public static function exception( string $title, $content, string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_EXCEPTION );
     }
@@ -57,11 +55,11 @@ class LogUtil
     /**
      * 错误记录
      * @param string $title
-     * @param array $content
+     * @param $content
      * @param string $logFileName
      * @return bool|int
      */
-    public static function error( string $title = '', array $content = [], string $logFileName = 'logger' )
+    public static function error( string $title, $content, string $logFileName = 'logger' )
     {
         return self::logger( $title, $content, $logFileName, self::LEVEL_ERROR );
     }
@@ -69,12 +67,12 @@ class LogUtil
     /**
      * 通用记录方法
      * @param string $title
-     * @param array $content
+     * @param $content
      * @param string $logFileName
      * @param string $logLevel
      * @return bool|int
      */
-    protected static function logger( string $title, array $content = [], string $logFileName = 'logger', string $logLevel = 'info' )
+    protected static function logger( string $title, $content, string $logFileName = 'logger', string $logLevel = 'info' )
     {
         $logPath = self::getDefaultLogPath( $logFileName );
         $text2Log = self::logFormmat( $title, $content, $logLevel );
@@ -105,15 +103,21 @@ class LogUtil
     /**
      * 日子格式
      * @param string $title
-     * @param array $content
+     * @param $content
      * @param string $logLevel
      * @return string
      */
-    private static function logFormmat( string $title = '', array $content = [], string $logLevel )
+    private static function logFormmat( string $title, $content, string $logLevel )
     {
         $logFormmat = '['.date( 'Y-m-d H:i:s' ).'] local.'.$logLevel.': '.$title;
         if ( $content ) {
-            $logFormmat .= "\r\n省略内容如下:".json_encode( array_slice( $content, 0, 8) );
+            if ( is_array( $content ) ) {
+                $logFormmat .= "\r\n省略内容如下:".json_encode( array_slice( $content, 0, 8) );
+            }elseif ( is_string( $content ) ) {
+                $logFormmat .= "\r\n省略内容如下:".$content;
+            }else{
+                $logFormmat .= "\r\n省略内容如下:".json_encode( $content );
+            }
         }
 
         return $logFormmat."\r\n\r\n";
@@ -138,6 +142,6 @@ class LogUtil
     /** 项目根目录 @return string */
     private static function appRootPath():string
     {
-        return dirname( __FILE__, 7 );
+        return dirname( __FILE__, 4 );
     }
 }
