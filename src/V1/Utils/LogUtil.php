@@ -92,7 +92,10 @@ class LogUtil
             return $logName;
         }
 
-        $logPath = self::logPath().'/logs/'.basename( $logName ).'-'.date( 'Y-m-d' ).'.log';
+        $dateFlag = '_'.date( 'Y-m-d' );
+        $logName = str_replace( $dateFlag, '', basename( $logName ) );
+
+        $logPath = self::logPath().'/logs/'.$logName.'.log';
         if( !is_dir( dirname( $logPath ) ) ) {
             throw new \Exception( '设置日志目录不存在:'.$logPath, false );
         }
