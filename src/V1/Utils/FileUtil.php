@@ -53,7 +53,7 @@ class FileUtil
     }
 
     /** 文件重命名 */
-    public function rename( string $oldFilePath, string $newFilePath )
+    public static function rename( string $oldFilePath, string $newFilePath )
     {
         if ( !$newFilePath )
             { throw new \Exception( '500', '新文件名不能为空:'.$newFilePath ); }
