@@ -34,7 +34,7 @@ class FileUtil
     }
 
     /** 检查文件目录是否存在 目录无则创建 文件有则删除 */
-    public function checkDirFileExist( string $filePath )
+    public static function checkDirFileExist( string $filePath )
     {
         $dirPath = dirname( $filePath );
         if ( !$dirPath ) { throw new \Exception( 500, '系统异常：暂无目录信息' ); }
@@ -73,7 +73,7 @@ class FileUtil
             'replaceArray' => [ 'Sync'. {createClassName} .'Logic', $this->inputName, ],
         ];
      */
-    public function createStubFile( array $createStuFileConfig )
+    public static function createStubFile( array $createStuFileConfig )
     {
         if ( !isset( $createStuFileConfig[ 'stubPath' ] ) || !isset( $createStuFileConfig[ 'createClassPath' ] )
             || !isset( $createStuFileConfig[ 'targetArray' ] ) || !isset( $createStuFileConfig[ 'replaceArray' ] )
