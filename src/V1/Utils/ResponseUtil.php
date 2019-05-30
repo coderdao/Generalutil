@@ -7,12 +7,14 @@ use Illuminate\Support\Collection;
 class ResponseUtil
 {
     protected $isSuccess;
-
     protected $message = '';
+    protected $data = [];
+
+    protected $page = 0;
+    protected $nums = 0;
+    protected $totalPage = 0;
 
     protected $jump = '';
-
-    protected $data = [];
 
     public function __construct(bool $isSuccess)
     {
@@ -35,14 +37,7 @@ class ResponseUtil
         return $this;
     }
 
-    public function jump(string $data)
-    {
-        $this->jump = $data;
-        return $this;
-    }
-
-
-    public function with($data)
+    public function data($data)
     {
 
         if (is_array($data)) {
@@ -56,6 +51,12 @@ class ResponseUtil
         } else {
             throw new \Exception('Server Api Response Param Unexpected.');
         }
+        return $this;
+    }
+
+    public function jump(string $data)
+    {
+        $this->jump = $data;
         return $this;
     }
 
