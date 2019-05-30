@@ -10,9 +10,10 @@ class ResponseUtil
     protected $message = '';
     protected $data = [];
 
-    protected $page = 0;
-    protected $nums = 0;
-    protected $totalPage = 0;
+    protected $page = 1;
+    protected $pageSize = 0;
+    protected $totalNums = 0;
+    protected $totalPage = 1;
 
     protected $jump = '';
 
@@ -57,6 +58,21 @@ class ResponseUtil
     public function jump(string $data)
     {
         $this->jump = $data;
+        return $this;
+    }
+
+    public function paginate( int $totalNums, int $pageSize, int $page = 1 )
+    {
+        $page <= 1 && $page = 1;
+        $this->page = $page;
+        $this->pageSize = $pageSize;
+        $this->totalNums = $totalNums;
+
+        if ( !$totalNums || !$pageSize ) {
+            return $this;
+        }
+
+        $this->totalPage = ceil( $totalNums / $pageSize );
         return $this;
     }
 
@@ -105,8 +121,14 @@ class ResponseUtil
         return response()->json([
             'status' => $this->isSuccess,
             'msg' => $this->message,
-            'jump' => $this->jump,
             'data' => $this->data,
+            'jump' => $this->jump,
+            'paginate' => [
+                'page' => $this->page,
+                'page_size' => $this->pageSize,
+                'total_page' => $this->totalPage,
+                'total_num' => $this->totalNums,
+            ],
         ]);
     }
 }
