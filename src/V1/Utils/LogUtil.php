@@ -17,6 +17,33 @@ class LogUtil
     const LEVEL_EXCEPTION = 'exception';
 
     /**
+     * 简单的日志记录方法
+     * example:
+     *       $result = array(
+     *           'cc' => 'dd'
+     *       );
+     *
+     * log('插入状态', $result, 'fileSpec', '/work/tmp')
+     *
+     * @param $message
+     * @param $context
+     * @param $filePath
+     */
+    public static function log($message, $context, $fileName, $path = '/work/tmp/logs/')
+    {
+        $filePath = "{$path}/{$fileName}";
+        if (! file_exists($filePath)) {
+            FileUtil::mkdir($path);
+        }
+
+        $str = "{$message}\n";
+        $str .= var_export($context, true);
+
+        file_put_contents($filePath, $str, FILE_APPEND);
+    }
+
+
+    /**
      * 流程记录
      * @param string $title
      * @param $content
