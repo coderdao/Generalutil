@@ -13,6 +13,26 @@ use Abo\Fasterapi\Exceptions\InnerException;
 
 class FileUtil
 {
+
+    public static function mkdir($path)
+    {
+        if (strpos($path, dirname(PATH_APP)) !== false && strpos($path, '/work/files') !== false) {
+            throw new \Exception('path disabled', 108);
+        }
+        $p = array();
+        foreach (explode('/', $path) as $d) {
+            $p[] = $d;
+            if (!is_dir("/" . implode('/', $p))) {
+                if (is_file("/" . implode('/', $p))) {
+                    throw new \Exception('path file name exist', 109);
+                }
+                mkdir("/" . implode('/', $p), 0777);
+                chmod("/" . implode('/', $p), 0777);
+            }
+        }
+        return true;
+    }
+
     /** 检查文件目录是否存在 目录无则创建 文件有则删除 */
     public function checkDirFileExist( string $filePath )
     {
