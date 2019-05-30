@@ -8,9 +8,6 @@
 
 namespace Abo\Generalutil\V1\Utils;
 
-use Abo\Fasterapi\Exceptions\ApiException;
-use Abo\Fasterapi\Exceptions\InnerException;
-
 class FileUtil
 {
 
