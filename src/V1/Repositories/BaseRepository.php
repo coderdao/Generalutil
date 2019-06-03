@@ -170,4 +170,22 @@ class BaseRepository
 
         return $Model;
     }
+
+
+    /**
+     * 添加/更新
+     * @param array $saveData
+     * @param int $keyId
+     * @return int
+     */
+    public function save( array $saveData, int $keyId, $keyName = 'id' )
+    {
+        if ( $keyId ) {
+            $this->Model->where( $keyName, '=', intval( $keyId ) )->update( $saveData );
+        }else{
+            $keyId = $this->Model->insertGetId( $saveData );
+        }
+
+        return $keyId;
+    }
 }
