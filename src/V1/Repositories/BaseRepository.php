@@ -175,17 +175,18 @@ class BaseRepository
     /**
      * 添加/更新
      * @param array $saveData
-     * @param int $keyId
+     * @param int $keyValue 一般是id,主要取决 $keyName 所指字段
+     * @param string $keyName
      * @return int
      */
-    public function save( array $saveData, int $keyId, $keyName = 'id' )
+    public function save( array $saveData, int $keyValue, $keyName = 'id' ):int
     {
-        if ( $keyId ) {
-            $this->Model->where( $keyName, '=', intval( $keyId ) )->update( $saveData );
+        if ( $keyValue ) {
+            $ret = $this->Model->where( $keyName, '=', $keyValue )->update( $saveData );
         }else{
-            $keyId = $this->Model->insertGetId( $saveData );
+            $ret = $this->Model->insertGetId( $saveData );
         }
 
-        return $keyId;
+        return $ret;
     }
 }
