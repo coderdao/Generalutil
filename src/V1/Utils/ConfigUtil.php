@@ -50,7 +50,7 @@ class ConfigUtil
             return [];
         }
 
-        return include_once ( $configPath );
+        return include ( $configPath );
     }
 
 }
