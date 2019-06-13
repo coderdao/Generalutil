@@ -5,7 +5,7 @@
     <style>
         body{margin: 0px;}
         table, table a { color: #636b6f; }
-        table { position: fixed;height: 100%;width: 100%;background: #fff;text-align: center;font-size: 30px; }
+        table { position: fixed;height: 100%;width: 100%;background: #fff;text-align: center;word-break: break-word; }
         table a { border-bottom: 1px solid #b1b7ba;font-size: inherit; text-decoration: none; }
         table a:hover { border-bottom-color: black; }
     </style>
