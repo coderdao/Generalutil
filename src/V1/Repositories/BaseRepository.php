@@ -189,4 +189,18 @@ class BaseRepository
 
         return $ret;
     }
+
+
+    /** 删除方法 */
+    public function delete( $id, $idName = 'id' )
+    {
+        $ret = false;
+        if ( is_array( $id ) ) {
+            $ret = $this->Model->whereIn( $idName, $id )->delete();
+        }else{
+            $ret = $this->Model->where( $idName, '=', $id )->delete();
+        }
+
+        return $ret;
+    }
 }
