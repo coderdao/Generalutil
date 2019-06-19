@@ -165,6 +165,11 @@ class BaseRepository
                 continue;
             }
 
+            if ( is_array( $v2Where ) ) {
+                $Model = $Model->whereIn( $k2Where, $v2Where );
+                continue;
+            }
+
             $Model = $Model->where( $k2Where, '=', $v2Where );
         }
 
