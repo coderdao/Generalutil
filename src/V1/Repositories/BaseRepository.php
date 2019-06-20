@@ -30,14 +30,22 @@ class BaseRepository
         $this->Model = $Model;
     }
 
-    /** 根据条件搜索单个信息 @param array $where [ 'whereName'=>'whereValue' ] */
-    public function getInfoByKey( array $where, array $column2Select = [ '*' ] )
+    /**
+     * 根据条件搜索单个信息
+     * @param array|Eloquent $where [ '!whereName'=>'whereValue' ]
+     * @param array $column2Select
+     * @return array|mixed
+     */
+    public function getInfoByKey( $where, array $column2Select = [ '*' ] )
     {
-        $where = array_filter( $where );
-        if ( !$where ) { return []; }
-
+        // 条件
+        if ( $where instanceof \Eloquent ) {
+            $this->Model = $where;
+        }
+        if ( is_array( $where ) ) {
+            $this->Model = $this->handleWhereParam( $this->Model, $where );
+        }
         $infoModel = $this->Model->select( $column2Select );
-        $infoModel = $this->handleWhereParam( $infoModel, $where );
 
         $info = $infoModel->first();
         if ( false === $info ) { return []; }
@@ -57,19 +65,40 @@ class BaseRepository
      * @param $keyName string
      * @param array $keyId
      * @param array $column2Select
-     * @param array $where [ 'whereName'=>'whereValue' ]
+     * @param array|Eloquent $where [ '!whereName'=>'whereValue' ]
+     * @param array $paginate [ 'pageNow', 'pageSize', 'order'/[ 'order' => 'desc' ] ]
      * @return array
      */
-    public function getListByKey( array $column2Select = [ '*' ], array $where = [], int $page = 0, int $pageNum = 0 ):array
+    public function getListByKey( array $column2Select = [ '*' ], $where, array $paginate = [] ):array
     {
+        // 条件
+        if ( $where instanceof \Eloquent ) {
+            $this->Model = $where;
+        }
+        if ( is_array( $where ) ) {
+            $this->Model = $this->handleWhereParam( $this->Model, $where );
+        }
         $listModel = $this->Model->select( $column2Select );
-        $listModel = $this->handleWhereParam( $listModel, $where );
 
-        if ( $page && $pageNum ) {
+        // 分页/排序
+        $defaultPaginate = [ 0, 0, 0 ];
+        $paginate += $defaultPaginate;
+        list( $page, $pageNum, $orderBy ) = $paginate;
+        if ( $page && $pageNum
+            && ( is_int( $page ) && is_int( $pageNum ) )
+        ) {
             $listModel = $listModel->forPage( $page, $pageNum );
         }
 
-        // 获取单一字段时,直接返回
+        if ( is_string( $orderBy ) && $orderBy ) {
+            $listModel = $listModel->orderByDesc( $orderBy );
+        }elseif ( is_array( $orderBy ) && $orderBy ) {
+            foreach ( $orderBy as $k2OrderBy => $v2OrderBy ) {
+                $listModel = $listModel->orderBy( $k2OrderBy, $v2OrderBy );
+            }
+        }
+
+        // 结果 - 获取单一字段时,直接返回
         $column2Select_0 = current( $column2Select );
         if ( 1 == count( $column2Select ) && '*' != $column2Select_0 ) {
             $list = $listModel->pluck( $column2Select_0 );
@@ -78,7 +107,6 @@ class BaseRepository
         }
 
         if ( false === $list ) { return []; }
-
         return $list->toArray();
     }
 
@@ -160,13 +188,20 @@ class BaseRepository
         if ( !$Model || !$where ) { return $Model; }
 
         foreach ( $where as $k2Where => $v2Where ) {
-            if ( isset( $v2Where[ 'op' ] ) ) {
-                $Model = $Model->where( $k2Where, strval( $v2Where[ 'op' ] ), $v2Where );
+            // 数组
+            if ( is_array( $v2Where ) ) {
+                if ( 0 === strpos( $k2Where, '!' ) ) {
+                    $Model = $Model->whereNotIn( $k2Where, $v2Where );
+                    continue;
+                }
+
+                $Model = $Model->whereIn( $k2Where, $v2Where );
                 continue;
             }
 
-            if ( is_array( $v2Where ) ) {
-                $Model = $Model->whereIn( $k2Where, $v2Where );
+            // 字符串||数字
+            if ( 0 === strpos( $k2Where, '!' ) ) {
+                $Model = $Model->where( $k2Where, '!=', $v2Where );
                 continue;
             }
 
