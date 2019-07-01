@@ -82,6 +82,6 @@ class RequestDto
             $pageSize = $this->request( 'pagesize', $pageSize, 'intval');
         }
 
-        return ( $pageSize >= 20 ?:20 );
+        return ( $pageSize ?:20 );
     }
 }
