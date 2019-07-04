@@ -23,8 +23,6 @@ class AnalysisUtil
             . self::$start_time . '(' . self::$start_memory . ')|------->';
     }
 
-
-
     public static function end()
     {
         self::$end_time = microtime( true );
