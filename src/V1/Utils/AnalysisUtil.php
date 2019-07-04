@@ -19,8 +19,7 @@ class AnalysisUtil
         self::$start_memory = memory_get_usage();  //单位为 byte(s)
         self::$start_time = microtime( true );
 
-        echo "\r\n<br/>" . 'Start @'
-            . self::$start_time . '(' . self::$start_memory . ')|------->';
+        // echo "\r\n<br/>" . 'Start @'. self::$start_time . '(' . self::$start_memory . ')|------->';
     }
 
     public static function end()
@@ -28,9 +27,15 @@ class AnalysisUtil
         self::$end_time = microtime( true );
         self::$end_memory = memory_get_usage();
 
-        echo 'End @'.self::$end_time.'('.self::$end_memory.') :';
-        echo '|======= 共耗时：'.(self::$end_time-self::$start_time).'ms，共用内存：'.(self::$end_memory-self::$start_memory);
+
+        $ret = 'Start @'. self::$start_time . '(' . self::$start_memory . ')|------->'
+            .'End @'.self::$end_time.'('.self::$end_memory.') :'
+            .'|======= 共耗时：'.(self::$end_time-self::$start_time).'ms，共用内存：'
+            .(self::$end_memory-self::$start_memory);
+        header('analysis-' . $ret );
     }
+
+
 
     /**
      * 使用方法
