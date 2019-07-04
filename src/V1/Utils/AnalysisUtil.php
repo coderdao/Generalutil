@@ -10,12 +10,17 @@ namespace Abo\Generalutil\V1\Utils;
 class AnalysisUtil
 {
     static $start_time;
-    static $end_time;
     static $start_memory;
+
+    static $end_time;
     static $end_memory;
+
+    static $i2Count = 0;
 
     public static function start()
     {
+        self::$i2Count++;
+
         self::$start_memory = memory_get_usage();  //单位为 byte(s)
         self::$start_time = microtime( true );
 
@@ -27,15 +32,17 @@ class AnalysisUtil
         self::$end_time = microtime( true );
         self::$end_memory = memory_get_usage();
 
-
-        $ret = 'Start @'. self::$start_time . '(' . self::$start_memory . ')|------->'
-            .'End @'.self::$end_time.'('.self::$end_memory.') :'
-            .'|======= 共耗时：'.(self::$end_time-self::$start_time).'ms，共用内存：'
+        /*
+        'Start '. self::$start_time . '(' . self::$start_memory . ')|------->'
+            .'End '.self::$end_time.'('.self::$end_memory.') :'
+            .
+        */
+        $ret = 'use_time_ _'.(self::$end_time-self::$start_time).'ms_ _use_memory_ _'
             .(self::$end_memory-self::$start_memory);
-        header('analysis-' . $ret );
+
+        setcookie('debug-'.self::$i2Count, $ret);
+        //response()->header( 'debug-', $ret );
     }
-
-
 
     /**
      * 使用方法
