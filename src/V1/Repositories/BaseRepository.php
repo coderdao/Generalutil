@@ -48,7 +48,7 @@ class BaseRepository
         $infoModel = $this->Model->select( $column2Select );
 
         $info = $infoModel->first();
-        if ( false === $info ) { return []; }
+        if ( !$info ) { return []; }
         $info = $info->toArray();
 
         // 获取单一字段时,直接返回
