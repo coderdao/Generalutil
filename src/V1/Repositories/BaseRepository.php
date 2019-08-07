@@ -106,7 +106,7 @@ class BaseRepository
             $list = $listModel->get();
         }
 
-        if ( false === $list ) { return []; }
+        if ( !$list ) { return []; }
         return $list->toArray();
     }
 
