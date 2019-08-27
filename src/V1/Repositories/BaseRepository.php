@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
  */
 class BaseRepository
 {
+    /** @var $Model \Illuminate\Database\Query\Builder */
     protected $Model;
 
     public function __construct( Model $Model )
