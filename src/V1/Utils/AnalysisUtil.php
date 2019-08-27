@@ -9,13 +9,13 @@ namespace Abo\Generalutil\V1\Utils;
 
 class AnalysisUtil
 {
-    static $start_time;
-    static $start_memory;
+    private static $start_time;
+    private static $start_memory;
 
-    static $end_time;
-    static $end_memory;
+    private static $end_time;
+    private static $end_memory;
 
-    static $i2Count = 0;
+    private static $i2Count = 0;
 
     public static function start()
     {
@@ -40,6 +40,7 @@ class AnalysisUtil
         $ret = 'use_time_ _'.(self::$end_time-self::$start_time).'ms_ _use_memory_ _'
             .(self::$end_memory-self::$start_memory);
 
+        // echo 'debug-' . self::$i2Count . '~' . $ret . "\r\n";
         setcookie('debug-'.self::$i2Count, $ret);
         //response()->header( 'debug-', $ret );
     }
