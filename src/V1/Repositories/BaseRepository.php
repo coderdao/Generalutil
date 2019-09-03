@@ -171,7 +171,7 @@ class BaseRepository
         $updateColumnsKeyStr = implode( ',', $updateColumnsKeyArr );
 
         $duplicateInsertSql = "insert into {$tableName} ( {$insertColumnsKeyStr} ) "
-            . "values ( {$insertColumnsQuestionStr} )  ON DUPLICATE KEY UPDATE {$updateColumnsKeyStr}";
+            . "values ( {$insertColumnsQuestionStr} )  ON DUPLICATE KEY UPDATE {$updateColumnsKeyStr};";
 
         if ( $connection ) {
             $ret2Return = DB::connection( $connection )->insert( $duplicateInsertSql, $insertColumnsBindValue );
@@ -179,6 +179,47 @@ class BaseRepository
             $ret2Return = DB::insert( $duplicateInsertSql, $insertColumnsBindValue );
         }
 
+
+        return $ret2Return;
+    }
+
+    /**
+     * 多个个插入更新
+     * @param array $fileCategoryRelationArr [ [ 'id' => 1 ] ]
+     * @param string $tableName
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function duplicateKeyInsertArray( array $fileCategoryRelationArr, string $tableName = '', string $connection = '' )
+    {
+        if ( empty( $fileCategoryRelationArr ) ) { return false; }
+        foreach ( $fileCategoryRelationArr as $v2Data ) {
+            $updateColumnsKeyArr = $insertColumnsKey = $insertColumnsBindValue = [];
+
+            // 更新部分数据绑定
+            foreach ( $v2Data as $k2cate => $v2cate ) {
+                $updateColumnsKeyArr[] = "{$k2cate}='{$v2cate}'";
+                $insertColumnsKey[] = "`{$k2cate}`";
+                $insertColumnsBindValue[] = "'{$v2cate}'";
+            }
+            $updateColumnsKeyStr = implode( ',', $updateColumnsKeyArr );
+            $insertColumnsKeyStr = implode( ',', $insertColumnsKey );
+            $insertColumnsQuestionStr = implode( ',', $insertColumnsBindValue );
+
+            $duplicateInsertSqlArray[] = "insert into {$tableName} ( {$insertColumnsKeyStr} ) "
+                . "values ( {$insertColumnsQuestionStr} )  ON DUPLICATE KEY UPDATE {$updateColumnsKeyStr};";
+        }
+
+        if ( !$duplicateInsertSqlArray ) { return false; }
+        if ( $connection ) {
+            foreach ( $duplicateInsertSqlArray as $duplicateInsertSql ) {
+                $ret2Return = DB::connection( $connection )->insert( $duplicateInsertSql );
+            }
+        }else{
+            foreach ( $duplicateInsertSqlArray as $duplicateInsertSql ) {
+                $ret2Return = DB::insert( $duplicateInsertSql );
+            }
+        }
 
         return $ret2Return;
     }
@@ -235,7 +276,6 @@ class BaseRepository
     /** 删除方法 */
     public function delete( $id, $idName = 'id' )
     {
-        $ret = false;
         if ( is_array( $id ) ) {
             $ret = $this->Model->whereIn( $idName, $id )->delete();
         }else{
