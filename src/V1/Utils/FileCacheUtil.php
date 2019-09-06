@@ -59,49 +59,6 @@ class FileCacheUtil
     }
 
     /**
-     * 设置包含元数据的信息
-     * @param $key
-     * @param $value
-     * @param $time
-     * @param $expire
-     * @return bool
-     */
-    private function setItem($key, $value, $time, $expire)
-    {
-        $cache_file = $this->createCacheFile($key);
-        if ($cache_file === false) return false;
-
-        $cache_data = array('data' => $value, 'time' => $time, 'expire' => $expire);
-        $cache_data = json_encode($cache_data);
-
-        $put_result = file_put_contents($cache_file, $cache_data);
-        if ($put_result === false) return false;
-
-        return true;
-    }
-
-    /**
-     * 创建缓存文件
-     * @param $key
-     * @return bool|string
-     */
-    private function createCacheFile($key)
-    {
-        $cache_file = $this->path($key);
-        if (!file_exists($cache_file)) {
-            $directory = dirname($cache_file);
-            if (!is_dir($directory)) {
-                $make_dir_result = mkdir($directory, 0755, true);
-                if ($make_dir_result === false) return false;
-            }
-            $create_result = touch($cache_file);
-            if ($create_result === false) return false;
-        }
-
-        return $cache_file;
-    }
-
-    /**
      * 判断Key是否存在
      * @param $key
      * @return mixed
