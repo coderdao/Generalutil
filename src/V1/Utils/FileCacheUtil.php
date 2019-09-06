@@ -72,6 +72,31 @@ class FileCacheUtil
     }
 
     /**
+     * 删除一个key，同事会删除缓存文件
+     * @param $key
+     * @return mixed
+     */
+    public function delete($key)
+    {
+        $cache_file = $this->path($key);
+        if (file_exists($cache_file)) {
+            $unlink_result = unlink($cache_file);
+            if ($unlink_result === false) return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 清楚所有缓存
+     * @return mixed
+     */
+    public function flush()
+    {
+        return $this->delTree($this->cache_dir);
+    }
+
+    /**
      * 加法递增
      * @param $key
      * @param int $value
