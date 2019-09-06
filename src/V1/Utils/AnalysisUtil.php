@@ -41,7 +41,8 @@ class AnalysisUtil
             .(self::$end_memory-self::$start_memory);
 
         // echo 'debug-' . self::$i2Count . '~' . $ret . "\r\n";
-        setcookie('debug-'.self::$i2Count, $ret);
+        // setcookie('debug-'.self::$i2Count, $ret);
+        LogUtil::info( 'debug-' . self::$i2Count . '~' . $ret, '', 'AnalysisUtil' );
         //response()->header( 'debug-', $ret );
     }
 
