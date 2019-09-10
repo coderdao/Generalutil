@@ -122,7 +122,7 @@ class BaseRepository
         if ( $table ){
             $countSql = 'SELECT COUNT(1) as num FROM '.$table;
         }else{
-            $searchSql = $this->getSqlWithBind( $Model );
+            $searchSql = self::getSqlWithBind( $Model );
             $countSql = 'SELECT COUNT(1) as num FROM ('.$searchSql.') AS t';
         }
 
