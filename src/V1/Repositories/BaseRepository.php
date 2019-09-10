@@ -117,7 +117,7 @@ class BaseRepository
      * @param string $table string 全表总数据
      * @return int
      */
-    public function countSearchTotal( $Model, string $table = '' )
+    public static function countSearchTotal( $Model, string $table = '' )
     {
         if ( $table ){
             $countSql = 'SELECT COUNT(1) as num FROM '.$table;
