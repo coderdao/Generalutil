@@ -126,7 +126,7 @@ class BaseRepository
             $countSql = 'SELECT COUNT(1) as num FROM ('.$searchSql.') AS t';
         }
 
-        $count = DB::connection( $this->Model->getConnectionName() )->select( $countSql );
+        $count = DB::connection( $Model->getConnectionName() )->select( $countSql );
 
         $ret = json_decode( json_encode( $count[0] ), true );
         return !array_key_exists( 'num', $ret ) ? 0:$ret['num'];
