@@ -161,13 +161,14 @@ class BaseRepository
         $insertColumnsBindValue = array_values( $fileCategoryRelationArr );
 
         $insertColumnsQuestionStr = implode( ',', array_fill( 0, count( $fileCategoryRelationArr ), '?' ) );
-        $insertColumnsKeyStr = implode( ',', $insertColumns );
 
         // 更新部分数据绑定
         foreach ( $fileCategoryRelationArr as $k2cate => $v2cate ) {
-            $updateColumnsKeyArr[] = "{$k2cate}='{$v2cate}'";
+            $insertColumnsKeyStr[] = "`{$k2cate}`";
+            $updateColumnsKeyArr[] = "`{$k2cate}`='{$v2cate}'";
         }
 
+        $insertColumnsKeyStr = implode( ',', $insertColumnsKeyStr );
         $updateColumnsKeyStr = implode( ',', $updateColumnsKeyArr );
 
         $duplicateInsertSql = "insert into {$tableName} ( {$insertColumnsKeyStr} ) "
