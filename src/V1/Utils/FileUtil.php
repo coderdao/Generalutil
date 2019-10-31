@@ -73,7 +73,7 @@ class FileUtil
                 if ($entry == '.' || $entry == '..') {
                     continue;
                 }
-                self::do_rmdir( $dirname . '/' . $entry );
+                self::rmdir( $dirname . '/' . $entry );
             }
         }
 
