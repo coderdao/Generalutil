@@ -34,6 +34,27 @@ class FileCacheUtil
 
 
     /**
+     * 一体化方法
+     * @param string $cacheKey
+     * @param int $expire
+     * @param $dataFunction
+     * @return array|mixed
+     */
+    public function remember( string $cacheKey, int $expire, $dataFunction )
+    {
+        if ( !$cacheKey ) return [];
+
+        $cacheData = $this->get( $cacheKey );
+        if ( $cacheData ) return $cacheData;
+
+        $data = call_user_func( $dataFunction );
+        if ( !$data ) return [];
+
+        $this->set( $cacheKey, $cacheData, $expire );
+        return $data;
+    }
+
+    /**
      * 根据key获取值，会判断是否过期
      * @param $key
      * @return mixed

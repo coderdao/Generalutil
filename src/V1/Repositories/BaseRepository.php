@@ -234,7 +234,7 @@ class BaseRepository
             // 数组
             if ( is_array( $v2Where ) ) {
                 if ( 0 === strpos( $k2Where, '!' ) ) {
-                    $Model = $Model->whereNotIn( $k2Where, $v2Where );
+                    $Model = $Model->whereNotIn( ltrim( $k2Where, '!' ), $v2Where );
                     continue;
                 }
 
@@ -244,7 +244,7 @@ class BaseRepository
 
             // 字符串||数字
             if ( 0 === strpos( $k2Where, '!' ) ) {
-                $Model = $Model->where( $k2Where, '!=', $v2Where );
+                $Model = $Model->where( ltrim( $k2Where, '!' ), '!=', $v2Where );
                 continue;
             }
 
