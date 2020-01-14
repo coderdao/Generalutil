@@ -59,6 +59,7 @@ class ValidateUtil
         'notBetween' => ':attribute必须不在:1-:2范围内',
         'max'     => ':attribute最大值为:1',
         'min'     => ':attribute最小值为:1',
+        'maxlength'  => ':attribute长度最大为:1',
         'length'  => ':attribute长度必须为:1',
         'confirm' => ':attribute和:1不一致',
         'gt'      => ':attribute必须大于:1',
@@ -313,6 +314,17 @@ class ValidateUtil
      */
     public static function min($rule, $data) {
         return $data >= $rule;
+    }
+
+    /**
+     * [in description]
+     * @param  [type] $rule [验证规则]
+     * @param  [type] $data [需要验证的数据]
+     * @return [type]       [boolean]
+     */
+    public static function maxlength($rule, $data) {
+        $maxlength = is_array($data) ? count($data) : strlen($data);
+        return $maxlength >= $rule;
     }
 
     /**
