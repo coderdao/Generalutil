@@ -117,16 +117,16 @@ class BaseRepository
      * @param string $table string 全表总数据
      * @return int
      */
-    public static function countSearchTotal( $Model, string $table = '' )
+    public function countSearchTotal( $Model, string $table = '' )
     {
         if ( $table ){
             $countSql = 'SELECT COUNT(1) as num FROM '.$table;
         }else{
-            $searchSql = self::getSqlWithBind( $Model );
+            $searchSql = $this->getSqlWithBind( $Model );
             $countSql = 'SELECT COUNT(1) as num FROM ('.$searchSql.') AS t';
         }
 
-        $count = DB::connection( $Model->getConnectionName() )->select( $countSql );
+        $count = DB::connection( $this->Model->getConnectionName() )->select( $countSql );
 
         $ret = json_decode( json_encode( $count[0] ), true );
         return !array_key_exists( 'num', $ret ) ? 0:$ret['num'];
@@ -248,6 +248,16 @@ class BaseRepository
                 continue;
             }
 
+            if ( 0 === strpos( $k2Where, '>' ) ) {
+                $Model = $Model->where( ltrim( $k2Where, '>' ), '>=', $v2Where );
+                continue;
+            }
+
+            if ( 0 === strpos( $k2Where, '<' ) ) {
+                $Model = $Model->where( ltrim( $k2Where, '<' ), '<=', $v2Where );
+                continue;
+            }
+
             $Model = $Model->where( $k2Where, '=', $v2Where );
         }
 
@@ -277,6 +287,7 @@ class BaseRepository
     /** 删除方法 */
     public function delete( $id, $idName = 'id' )
     {
+        $ret = false;
         if ( is_array( $id ) ) {
             $ret = $this->Model->whereIn( $idName, $id )->delete();
         }else{

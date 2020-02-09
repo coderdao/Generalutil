@@ -56,7 +56,7 @@ class ObjectDto
             if($value->class == $class_name) {
                 $methodAccess = new \ReflectionMethod($class_name,$value->name);
                 if($methodAccess->isPublic()) {
-                    $func_name = uncamelize($value->name);
+                    $func_name = $this->uncamelize($value->name);
                     if (strpos($func_name, 'get_') === 0 && strlen($func_name)> 4 ) {
                         $get_func = $value->name;
                         $prop_name = substr($func_name, 4);
@@ -75,5 +75,10 @@ class ObjectDto
         }
 
         return $data;
+    }
+
+    private function uncamelize($camelCaps,$separator='_')
+    {
+        return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
     }
 }

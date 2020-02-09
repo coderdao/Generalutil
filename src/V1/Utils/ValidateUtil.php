@@ -34,7 +34,7 @@ class ValidateUtil
     private $validate = [];
 
     //需要验证的参数
-    private static $data = [];
+    private $data = [];
 
     //添加的规则
     private $add_rules = [];
@@ -60,6 +60,7 @@ class ValidateUtil
         'max'     => ':attribute最大值为:1',
         'min'     => ':attribute最小值为:1',
         'maxlength'  => ':attribute长度最大为:1',
+        'minlength'  => ':attribute长度最小为:1',
         'length'  => ':attribute长度必须为:1',
         'confirm' => ':attribute和:1不一致',
         'gt'      => ':attribute必须大于:1',
@@ -81,16 +82,21 @@ class ValidateUtil
      */
     public function validate($data) {
         $this->data = $data;
-        foreach ($this->validate as $key => $item) {
-            $item_len = count($item);
-            $name = $item[0];
-            $rules = $item[1];
 
-            $rules = explode('|', $rules);
+        list( $formRules, $requestRules ) = $this->formatValidateRules();
 
-            $message = $item_len > 2 ? explode('|', $item[2]) : null;
+        $loseRequire = array_diff( array_keys( $requestRules ), array_keys( $data ) );
+        if ( $loseRequire ) {
+            $this->error[] = implode( ',', array_values( $requestRules ) )." 必填，请补充后重试";
+            return empty($this->error) ? TRUE : FALSE;
+        }
 
-            $this->check($name, $rules, $message);
+        // 根据数据验证规则
+        foreach ( $data as $k2Data => $v2Data ) {
+            if ( !isset( $formRules[ $k2Data ] ) ) continue;
+            list( $name, $rules, $message ) = $formRules[ $k2Data ];
+
+            $this->check( $k2Data, $name, $rules, $message );
         }
 
         if(!empty($this->add_rules)) {
@@ -101,19 +107,49 @@ class ValidateUtil
     }
 
     /**
+     * 格式化 验证规则
+     * @return array
+     */
+    private function formatValidateRules()
+    {
+        $temFormRules = $this->validate;
+        $formRules = $requestRules = [];
+
+        foreach ( $temFormRules as $key => &$item ) {
+            $item_len = count( $item );
+            if ( $item_len < 2 ) continue;
+
+            $name = $item[0];
+            $rules = $item[1];
+
+            $name = explode('|', $name);
+            $item[ 0 ] = $name[ 1 ];
+            if ( strpos( $rules, 'require' ) === 0 ) {
+                $requestRules[ $name[ 0 ] ] = $name[ 1 ];
+            }
+
+
+            // 必须在检查 require 下面，不然会翻车
+            $item[1] = explode( '|', $rules );
+            $item[2] = $item_len > 2 ? explode('|', $item[2]) : null;
+
+            $formRules[ $name[ 0 ] ] = $item;
+        }
+        return [ $formRules, $requestRules ];
+    }
+
+    /**
      * [check 单个字段验证]
      * @param  [type] $name    [description]
      * @param  [type] $rules   [description]
      * @param  [type] $message [description]
      * @return [type]          [null]
      */
-    private function check($name, $rules, $message) {
+    private function check($code, $name, $rules, $message) {
         //$title = $name;
-        $rule_name = $title = $name;
-        if(strpos($name, '|')) {
-            $rule_name = explode('|', $name)[0];
-            $title = explode('|', $name)[1];
-        }
+        $rule_name = $code;
+        $title = $name;
+
         foreach ($rules as $i => $rule) {
             $validate_data = isset($this->data[$rule_name]) ? $this->data[$rule_name] : null;
 
@@ -324,7 +360,18 @@ class ValidateUtil
      */
     public static function maxlength($rule, $data) {
         $maxlength = is_array($data) ? count($data) : strlen($data);
-        return $maxlength >= $rule;
+        return $maxlength <= $rule;
+    }
+
+    /**
+     * [in description]
+     * @param  [type] $rule [验证规则]
+     * @param  [type] $data [需要验证的数据]
+     * @return [type]       [boolean]
+     */
+    public static function minlength($rule, $data) {
+        $minlength = is_array($data) ? count($data) : strlen($data);
+        return $minlength >= $rule;
     }
 
     /**
