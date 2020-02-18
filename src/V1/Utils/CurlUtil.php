@@ -22,7 +22,7 @@ class CurlUtil
      * @param int $expire | $is_browser | array $the_header | array $extend
      * @return mixed
      */
-    public function makeRequest( string $method, string $url, $params = [], string $content_type = self::CONTENT_TYPE_URLENCODED, int $expire = 5, $is_browser=true, $the_header=[], $extend=[]){
+    public function makeRequest( string $method = CurlUtil::METHOD_GET, string $url, $params = [], int $expire = 5, string $content_type = self::CONTENT_TYPE_URLENCODED, $is_browser=true, $the_header=[], $extend=[]){
 
         $ch = curl_init($url);
 
