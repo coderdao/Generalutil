@@ -72,7 +72,12 @@ class ValidateUtil
 
     public function __construct($validate = null) {
         $this->validate = $validate;
+    }
 
+    public function dataValidate( $rule, $date )
+    {
+        $this->validate = $rule;
+        return $this->validate( $date );
     }
 
     /**
