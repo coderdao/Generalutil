@@ -272,10 +272,11 @@ class BaseRepository
      * @param string $keyName
      * @return int
      */
-    public function save( array $saveData, int $keyValue, $keyName = 'id' ):int
+    public function save( array $saveData, int $keyValue = 0, $keyName = 'id' ):int
     {
         if ( $keyValue ) {
-            $ret = $this->Model->where( $keyName, '=', $keyValue )->update( $saveData );
+            $this->Model->where( $keyName, '=', $keyValue )->update( $saveData );
+            $ret = $keyValue;
         }else{
             $ret = $this->Model->insertGetId( $saveData );
         }
