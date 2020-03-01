@@ -11,6 +11,12 @@ namespace Abo\Generalutil\V1\Utils;
 class FileUtil
 {
 
+    /**
+     * 创建目录
+     * @param $path
+     * @return bool
+     * @throws \Exception
+     */
     public static function mkdir($path)
     {
         if (strpos($path, dirname(PATH_APP)) !== false && strpos($path, '/work/files') !== false) {
