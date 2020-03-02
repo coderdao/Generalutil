@@ -74,10 +74,15 @@ class ValidateUtil
         $this->validate = $validate;
     }
 
-    public function dataValidate( $rule, $date )
+    public function dataValidate( $rule, $date, $thorw = true )
     {
         $this->validate = $rule;
-        return $this->validate( $date );
+        $ret2Validate = $this->validate( $date );
+
+        if ( $thorw )
+            throw new \Exception( $this->getError() );
+
+        return $ret2Validate;
     }
 
     /**
@@ -93,7 +98,7 @@ class ValidateUtil
         $loseRequire = array_diff( array_keys( $requestRules ), array_keys( $data ) );
         if ( $loseRequire ) {
             $this->error[] = implode( ',', array_values( $requestRules ) )." 必填，请补充后重试";
-            return empty($this->error) ? TRUE : FALSE;
+            return $this->error ? true : false;
         }
 
         // 根据数据验证规则
@@ -108,7 +113,7 @@ class ValidateUtil
             $this->checkAddRules();
         }
 
-        return empty($this->error) ? TRUE : FALSE;
+        return $this->error ? true : false;
     }
 
     /**
