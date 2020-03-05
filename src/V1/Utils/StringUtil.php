@@ -12,9 +12,9 @@ class StringUtil
 {
 
     // 随机字母字符串
-    public function randonString( $length = 8 )
+    public function randonString( $length = 8, $preffix = '' )
     {
-        return substr( md5( time() ), 0, $length );
+        return substr( md5( $preffix.time() ), 0, $length );
     }
 
     // 随机 数子字符串
