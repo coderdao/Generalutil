@@ -32,6 +32,47 @@ class BaseRepository
     }
 
     /**
+     * 模型分页
+     * @param $param array [ 'page', 'pageNum', 'order'|[ '', '' ] ]
+     * @param $modelFunction
+     * @return array
+     */
+    public function getPageSearch( $paginate, $modelFunction ) {
+        $ret2Return = [ 'total' => 0, 'data' => false ];
+
+        /** @var $SearchModel \Illuminate\Database\Query\Builder */
+        /** @var $CountModel \Illuminate\Database\Query\Builder */
+        $CountModel = $SearchModel = call_user_func( $dataFunction );
+        if ( !$SearchModel ) return $ret2Return;
+
+        $ret2Return[ 'total' ] = $CountModel->count();
+
+        // 分页/排序
+        $defaultPaginate = [ 0, 0, 0 ];
+        $paginate += $defaultPaginate;
+        list( $page, $pageNum, $orderBy ) = $paginate;
+        if ( $page && $pageNum
+            && ( is_int( $page ) && is_int( $pageNum ) )
+        ) {
+            $SearchModel = $SearchModel->forPage( $page, $pageNum );
+        }
+
+        if ( is_string( $orderBy ) && $orderBy ) {
+            $SearchModel = $SearchModel->orderByDesc( $orderBy );
+        }elseif ( is_array( $orderBy ) && $orderBy ) {
+            foreach ( $orderBy as $k2OrderBy => $v2OrderBy ) {
+                $SearchModel = $SearchModel->orderBy( $k2OrderBy, $v2OrderBy );
+            }
+        }
+
+        $SearchModel = $SearchModel->get();
+        if ( !$SearchModel ) return $ret2Return;
+
+        $ret2Return[ 'data' ] = $SearchModel->toArray();
+        return $ret2Return;
+    }
+
+    /**
      * 根据条件搜索单个信息
      * @param array|Eloquent $where [ '!whereName'=>'whereValue' ]
      * @param array $column2Select

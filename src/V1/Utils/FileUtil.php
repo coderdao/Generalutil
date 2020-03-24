@@ -11,12 +11,6 @@ namespace Abo\Generalutil\V1\Utils;
 class FileUtil
 {
 
-    /**
-     * 创建目录
-     * @param $path
-     * @return bool
-     * @throws \Exception
-     */
     public static function mkdir($path)
     {
         if (strpos($path, dirname(PATH_APP)) !== false && strpos($path, '/work/files') !== false) {
@@ -59,42 +53,46 @@ class FileUtil
     public static function rename( string $oldFilePath, string $newFilePath )
     {
         if ( !$newFilePath )
-            { throw new \Exception( '500', '新文件名不能为空:'.$newFilePath ); }
+        { throw new \Exception( '500', '新文件名不能为空:'.$newFilePath ); }
         if ( !$oldFilePath || !file_exists( $oldFilePath ) )
-            { throw new \Exception( '500', '重命名文件不存在:'.$oldFilePath ); }
+        { throw new \Exception( '500', '重命名文件不存在:'.$oldFilePath ); }
         if ( file_exists( $newFilePath ) ) { return '新文件已存在'; }
 
         return rename( $oldFilePath, $newFilePath );
     }
 
-    /** 删除 */
-    public static function rmdir( $dirname, $self = true )
+
+    /**
+     * 下载文件到目标路径
+     * @param $fileMd5  string 文件MD5
+     * @param $targetFilePath  string 保存文件路径
+     * @return bool
+     * @throws \Exception
+     */
+    public function downloadOneFile2Target( $sourceUrl, $targetFilePath )
     {
-        if (!file_exists($dirname)) return false;
-        if (is_file($dirname) || is_link($dirname)) return unlink($dirname);
+        if ( !$sourceUrl || !$targetFilePath ) return false;
 
-        $dir = dir($dirname);
-        if ($dir) {
-            while (false !== $entry = $dir->read()) {
-                if ($entry == '.' || $entry == '..') {
-                    continue;
-                }
-                self::rmdir( $dirname . '/' . $entry );
-            }
-        }
+        // 检查目标目录是否存在、创建
+        FileUtil::checkDirFileExist( $targetFilePath );
 
-        $dir->close();
-        $self && rmdir($dirname);
+        // 下载
+        $CurlUtil = new CurlUtil();
+        $fileContent = $CurlUtil->makeRequest( CurlUtil::METHOD_GET, $sourceUrl );
+        file_put_contents( $targetFilePath, $fileContent );
+        unset( $fileContent );
+
+        return $targetFilePath;
     }
 
     /**
      * 代码模板 创建 实例
-        $createStuFileConfig = [
-            'stubPath' => __DIR__.'/stubs/SyncDataLogic.stub',
-            'createClassPath' => app_path( 'Logic/Larasearch/'. {createClassName} .'.php' ),
-            'targetArray' => [ 'DummyClass', 'DummyTable', ],
-            'replaceArray' => [ 'Sync'. {createClassName} .'Logic', $this->inputName, ],
-        ];
+    $createStuFileConfig = [
+    'stubPath' => __DIR__.'/stubs/SyncDataLogic.stub',
+    'createClassPath' => app_path( 'Logic/Larasearch/'. {createClassName} .'.php' ),
+    'targetArray' => [ 'DummyClass', 'DummyTable', ],
+    'replaceArray' => [ 'Sync'. {createClassName} .'Logic', $this->inputName, ],
+    ];
      */
     public static function createStubFile( array $createStuFileConfig )
     {
