@@ -37,20 +37,21 @@ class BaseRepository
      * @param $modelFunction
      * @return array
      */
-    public function getPageSearch( $paginate, $modelFunction ) {
-        $ret2Return = [ 'total' => 0, 'data' => false ];
-
-        /** @var $SearchModel \Illuminate\Database\Query\Builder */
-        /** @var $CountModel \Illuminate\Database\Query\Builder */
-        $CountModel = $SearchModel = call_user_func( $dataFunction );
-        if ( !$SearchModel ) return $ret2Return;
-
-        $ret2Return[ 'total' ] = $CountModel->count();
-
-        // 分页/排序
+    public static function getPageSearch( $paginate, $modelFunction ) {
+        $ret2Return = [ 'total' => 0, 'pages' => 0, 'data' => false ];
         $defaultPaginate = [ 0, 0, 0 ];
         $paginate += $defaultPaginate;
         list( $page, $pageNum, $orderBy ) = $paginate;
+
+        /** @var $SearchModel \Illuminate\Database\Query\Builder */
+        /** @var $CountModel \Illuminate\Database\Query\Builder */
+        $CountModel = $SearchModel = call_user_func( $modelFunction );
+        if ( !$SearchModel ) return $ret2Return;
+
+        $ret2Return[ 'total' ] = $CountModel->count();
+        $ret2Return[ 'pages' ] = $ret2Return[ 'total' ] / $pageNum;
+
+        // 分页/排序
         if ( $page && $pageNum
             && ( is_int( $page ) && is_int( $pageNum ) )
         ) {
