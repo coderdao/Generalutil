@@ -49,7 +49,7 @@ class BaseRepository
         if ( !$SearchModel ) return $ret2Return;
 
         $ret2Return[ 'total' ] = $CountModel->count();
-        $ret2Return[ 'pages' ] = $ret2Return[ 'total' ] / $pageNum;
+        $ret2Return[ 'pages' ] = intval( $ret2Return[ 'total' ] / $pageNum );
 
         // 分页/排序
         if ( $page && $pageNum
@@ -112,7 +112,7 @@ class BaseRepository
      * @param array $paginate [ 'pageNow', 'pageSize', 'order'/[ 'order' => 'desc' ] ]
      * @return array
      */
-    public function getListByKey( array $column2Select = [ '*' ], $where, array $paginate = [] ):array
+    public function getListByKey( $where, array $column2Select = [ '*' ], array $paginate = [] ):array
     {
         // 条件
         if ( $where instanceof \Eloquent ) {
@@ -193,7 +193,7 @@ class BaseRepository
      * @return mixed
      * @throws \Exception
      */
-    public static function duplicateKeyInsert( array $fileCategoryRelationArr, string $tableName = '', string $connection = '' )
+    public static function duplicateKeyInsert( array $fileCategoryRelationArr, string $tableName = '', string $connection = '', $isAppend = [] )
     {
         $insertColumns = null;
         $updateColumnsKeyArr = $updateColumnsKeyStr = false;
@@ -207,7 +207,7 @@ class BaseRepository
         // 更新部分数据绑定
         foreach ( $fileCategoryRelationArr as $k2cate => $v2cate ) {
             $insertColumnsKeyStr[] = "`{$k2cate}`";
-            $updateColumnsKeyArr[] = "`{$k2cate}`='{$v2cate}'";
+            $updateColumnsKeyArr[] = in_array( $k2cate, $isAppend ) ? "`{$k2cate}`=`{$k2cate}`+{$v2cate}" : "`{$k2cate}`='{$v2cate}'";
         }
 
         $insertColumnsKeyStr = implode( ',', $insertColumnsKeyStr );

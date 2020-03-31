@@ -11,6 +11,15 @@ namespace Abo\Generalutil\V1\Utils;
 class FileUtil
 {
 
+    /**
+     * 获取文件类型
+     */
+    public static function getFileType($file_name)
+    {
+        $src = explode(".",$file_name);
+        return $src[sizeof($src)-1];
+    }
+
     public static function mkdir($path)
     {
         if (strpos($path, dirname(PATH_APP)) !== false && strpos($path, '/work/files') !== false) {
@@ -79,7 +88,7 @@ class FileUtil
         // 下载
         $CurlUtil = new CurlUtil();
         $fileContent = $CurlUtil->makeRequest( CurlUtil::METHOD_GET, $sourceUrl );
-        file_put_contents( $targetFilePath, $fileContent );
+        $savelenght = file_put_contents( $targetFilePath, $fileContent[ 'result' ] );
         unset( $fileContent );
 
         return $targetFilePath;
