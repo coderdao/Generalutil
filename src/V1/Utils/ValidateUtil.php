@@ -79,7 +79,7 @@ class ValidateUtil
         $this->validate = $rule;
         $ret2Validate = $this->validate( $date );
 
-        if ( $thorw )
+        if ( $ret2Validate && $thorw )
             throw new \Exception( $this->getError() );
 
         return $ret2Validate;
