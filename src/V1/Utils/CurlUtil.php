@@ -13,7 +13,7 @@ class CurlUtil
     const METHOD_POST = 'POST';
 
     const CONTENT_TYPE_URLENCODED = 'application/x-www-form-urlencoded';
-    const CONTENT_TYPE_URLENCODED_JSON = 'application/x-www-form-urlencoded,application/json';
+    const CONTENT_TYPE_URLENCODED_JSON = 'application/json';
 
     /**
      * 请求方法
@@ -57,7 +57,7 @@ class CurlUtil
                     break;
                 case "application/json":
                     if(is_array($params)){
-                        $params = json_encode($params);
+                        $params = json_encode($params,320);
                     }
                     $_header[]='Content-Type: application/json';
                     $_header[]='Content-Length: ' . strlen($params);
