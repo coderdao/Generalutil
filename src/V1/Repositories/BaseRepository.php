@@ -162,10 +162,10 @@ class BaseRepository
     public function countSearchTotal( $Model, string $table = '' )
     {
         if ( $table ){
-            $countSql = 'SELECT COUNT(1) as num FROM '.$table;
+            $countSql = 'SELECT COUNT(*) as num FROM '.$table;
         }else{
             $searchSql = $this->getSqlWithBind( $Model );
-            $countSql = 'SELECT COUNT(1) as num FROM ('.$searchSql.') AS t';
+            $countSql = 'SELECT COUNT(*) as num FROM ('.$searchSql.') AS t';
         }
 
         $count = DB::connection( $this->Model->getConnectionName() )->select( $countSql );
