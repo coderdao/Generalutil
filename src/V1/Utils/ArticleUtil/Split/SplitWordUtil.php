@@ -1,15 +1,13 @@
 <?php
-/*
- * 居于Unicode编码词典的php分词器
+/**
+ *  Unicode编码词典的php分词器
  *  1、只适用于php5，必要函数 iconv
  *  2、本程序是使用RMM逆向匹配算法进行分词的，词库需要特别编译，本类里提供了 MakeDict() 方法
  *  3、简单操作流程： SetSource -> StartAnalysis -> Get***Result
  *  4、对主词典使用特殊格式进行编码, 不需要载入词典到内存操作
  *
- * Copyright IT柏拉图  QQ: 2500875 Email: 2500875#qq.com
  *
  * @version 2.0
- *
  */
 
 namespace Abo\Generalutil\V1\Utils\ArticleUtil\Split;
