@@ -82,11 +82,6 @@ class RequestDto
             $pageSize = $this->request( 'pagesize', $pageSize, 'intval');
         }
 
-        return ( $pageSize ?:20 );
-    }
-
-    private function uncamelize($camelCaps,$separator='_')
-    {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
+        return ( $pageSize >= 20 ?:20 );
     }
 }

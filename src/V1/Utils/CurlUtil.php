@@ -13,7 +13,8 @@ class CurlUtil
     const METHOD_POST = 'POST';
 
     const CONTENT_TYPE_URLENCODED = 'application/x-www-form-urlencoded';
-    const CONTENT_TYPE_URLENCODED_JSON = 'application/json';
+    const CONTENT_TYPE_URLENCODED_JSON = 'application/x-www-form-urlencoded,application/json';
+    const CONTENT_TYPE_JSON = 'application/json';
 
     /**
      * 请求方法
@@ -36,8 +37,8 @@ class CurlUtil
             'Accept-Language: zh-cn',
             'Connection: Keep-Alive',
             'Cache-Control: no-cache',
+            'Cookie: '.http_build_query($_COOKIE),
         ];
-
 
         if( self::METHOD_GET === $method ){
             if(!empty($params)){
@@ -57,7 +58,7 @@ class CurlUtil
                     break;
                 case "application/json":
                     if(is_array($params)){
-                        $params = json_encode($params,320);
+                        $params = json_encode($params);
                     }
                     $_header[]='Content-Type: application/json';
                     $_header[]='Content-Length: ' . strlen($params);

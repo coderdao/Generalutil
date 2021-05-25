@@ -14,10 +14,13 @@ class FileUtil
     /**
      * 获取文件类型
      */
-    public static function getFileType($file_name)
+    public static function getFileType($fileName)
     {
-        $src = explode(".",$file_name);
-        return $src[sizeof($src)-1];
+        $src = explode(".",$fileName);
+
+        $fileType = $src[sizeof($src)-1];
+        $fileName = rtrim( $fileName, ".{$fileType}" );
+        return [ $fileName, $fileType ];
     }
 
     public static function mkdir($path)
@@ -62,9 +65,9 @@ class FileUtil
     public static function rename( string $oldFilePath, string $newFilePath )
     {
         if ( !$newFilePath )
-        { throw new \Exception( '500', '新文件名不能为空:'.$newFilePath ); }
+            { throw new \Exception( '500', '新文件名不能为空:'.$newFilePath ); }
         if ( !$oldFilePath || !file_exists( $oldFilePath ) )
-        { throw new \Exception( '500', '重命名文件不存在:'.$oldFilePath ); }
+            { throw new \Exception( '500', '重命名文件不存在:'.$oldFilePath ); }
         if ( file_exists( $newFilePath ) ) { return '新文件已存在'; }
 
         return rename( $oldFilePath, $newFilePath );
@@ -78,8 +81,10 @@ class FileUtil
      * @return bool
      * @throws \Exception
      */
-    public function downloadOneFile2Target( $sourceUrl, $targetFilePath )
+    public function downloadOneFile2Target( $sourceUrl, $targetFilePath, $mod = 777 )
     {
+        set_time_limit( 0 );
+        ini_set('memory_limit','256M');
         if ( !$sourceUrl || !$targetFilePath ) return false;
 
         // 检查目标目录是否存在、创建
@@ -87,8 +92,10 @@ class FileUtil
 
         // 下载
         $CurlUtil = new CurlUtil();
-        $fileContent = $CurlUtil->makeRequest( CurlUtil::METHOD_GET, $sourceUrl );
+        $fileContent = $CurlUtil->makeRequest( CurlUtil::METHOD_GET, $sourceUrl, [], 30 );
         $savelenght = file_put_contents( $targetFilePath, $fileContent[ 'result' ] );
+
+        $mod && chmod( $targetFilePath, $mod );
         unset( $fileContent );
 
         return $targetFilePath;
@@ -96,12 +103,12 @@ class FileUtil
 
     /**
      * 代码模板 创建 实例
-    $createStuFileConfig = [
-    'stubPath' => __DIR__.'/stubs/SyncDataLogic.stub',
-    'createClassPath' => app_path( 'Logic/Larasearch/'. {createClassName} .'.php' ),
-    'targetArray' => [ 'DummyClass', 'DummyTable', ],
-    'replaceArray' => [ 'Sync'. {createClassName} .'Logic', $this->inputName, ],
-    ];
+        $createStuFileConfig = [
+            'stubPath' => __DIR__.'/stubs/SyncDataLogic.stub',
+            'createClassPath' => app_path( 'Logic/Larasearch/'. {createClassName} .'.php' ),
+            'targetArray' => [ 'DummyClass', 'DummyTable', ],
+            'replaceArray' => [ 'Sync'. {createClassName} .'Logic', $this->inputName, ],
+        ];
      */
     public static function createStubFile( array $createStuFileConfig )
     {

@@ -49,12 +49,10 @@ class BaseRepository
         if ( !$SearchModel ) return $ret2Return;
 
         $ret2Return[ 'total' ] = $CountModel->count();
-        $ret2Return[ 'pages' ] = intval( $ret2Return[ 'total' ] / $pageNum );
+        $ret2Return[ 'pages' ] = ceil( ($ret2Return[ 'total' ] / $pageNum) );
 
         // 分页/排序
-        if ( $page && $pageNum
-            && ( is_int( $page ) && is_int( $pageNum ) )
-        ) {
+        if ( $page && $pageNum ) {
             $SearchModel = $SearchModel->forPage( $page, $pageNum );
         }
 
@@ -91,7 +89,7 @@ class BaseRepository
         $infoModel = $this->Model->select( $column2Select );
 
         $info = $infoModel->first();
-        if ( !$info ) { return []; }
+        if ( !$info ) { return ''; }
         $info = $info->toArray();
 
         // 获取单一字段时,直接返回
@@ -112,7 +110,7 @@ class BaseRepository
      * @param array $paginate [ 'pageNow', 'pageSize', 'order'/[ 'order' => 'desc' ] ]
      * @return array
      */
-    public function getListByKey( $where, array $column2Select = [ '*' ], array $paginate = [] ):array
+    public function getListByKey( array $column2Select = [ '*' ], $where, array $paginate = [] ):array
     {
         // 条件
         if ( $where instanceof \Eloquent ) {
@@ -161,10 +159,14 @@ class BaseRepository
      */
     public function countSearchTotal( $Model, string $table = '' )
     {
+        $CountModel = $Model; // clone  空字段时候，影响范围波及函数外
+
+
         if ( $table ){
             $countSql = 'SELECT COUNT(*) as num FROM '.$table;
         }else{
-            $searchSql = $this->getSqlWithBind( $Model );
+            // $CountModel = $CountModel->select(['*']);
+            $searchSql = $this->getSqlWithBind( $CountModel );
             $countSql = 'SELECT COUNT(*) as num FROM ('.$searchSql.') AS t';
         }
 
@@ -338,5 +340,15 @@ class BaseRepository
         }
 
         return $ret;
+    }
+
+    // 插入、存在即更新
+    public function updateOrInsert(array $isExist, array $values = [])
+    {
+        if (! $this->Model->where($isExist)->exists()) {
+            return $this->Model->insert($values);
+        }
+
+        return (bool) $this->Model->where($isExist)->update($values);
     }
 }

@@ -36,7 +36,7 @@ class LogUtil
             FileUtil::mkdir($path);
         }
 
-        $str = "{$message}\n";
+        $str = "{$message}--";
         $str .= var_export($context, true);
 
         file_put_contents($filePath, $str, FILE_APPEND);

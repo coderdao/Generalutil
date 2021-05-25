@@ -45,13 +45,13 @@ class FileCacheUtil
         if ( !$cacheKey ) return [];
 
         $cacheData = $this->get( $cacheKey );
-        if ( $cacheData ) return $cacheData;
+        if ( $cacheData !== false ) return $cacheData;
 
-        $data = call_user_func( $dataFunction );
-        if ( !$data ) return [];
+        $cacheData = call_user_func( $dataFunction );
+        if ( !$cacheData ) return [];
 
         $this->set( $cacheKey, $cacheData, $expire );
-        return $data;
+        return $cacheData;
     }
 
     /**
